@@ -36,7 +36,7 @@ The dashboard is a web interface built using React. It allows admin users to vie
 - Redux (for state management)
 - Axios (for API calls)
 - Chart.js / D3.js (for data visualization)
-- Bootstrap / Material-UI (for styling)
+- tailwind css (for styling)
 
 
 ## Links
