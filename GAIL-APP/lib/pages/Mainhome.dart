@@ -14,26 +14,25 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _currentIndex = 0;
-  int _isSelected = 0;
-  List<Widget> body = [
-    Icon(
-      Icons.home,
-      color: mainBlack,
-    ),
-    Icon(Icons.calendar_month, color: mainBlack),
-    Icon(Icons.report, color: mainBlack),
-    Icon(Icons.person_2_rounded, color: mainBlack),
-  ];
+  int _currentTab = 0;
+
   List<Widget> screens = [
     home(),
     const leaves(),
     const attendance(),
     const profile(),
   ];
-  Widget _currentScreen = home();
+ Widget _currentScreen = home();
+
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    List<IconData> listOfIcons = [
+      Icons.home_rounded,
+      Icons.calendar_month_rounded,
+      Icons.dashboard_rounded,
+      Icons.person_rounded,
+    ];
     return Scaffold(
       body: Stack(alignment: AlignmentDirectional.center, children: [
         _currentScreen,
@@ -115,7 +114,7 @@ class _HomeState extends State<Home> {
                             color: mainBlack,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Text(
@@ -153,40 +152,78 @@ class _HomeState extends State<Home> {
               ]),
             ))
       ]),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (int newIndex) {
-          setState(() {
-            _currentIndex = newIndex;
-            _currentScreen = screens[newIndex];
-            _isSelected = newIndex;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded,
-                color: _isSelected == 0 ? primaryYellow : mainBlack, size: 30),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_rounded,
-                color: _isSelected == 1 ? primaryYellow : mainBlack, size: 30),
-            label: "Leave",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.report_rounded,
-                color: _isSelected == 2 ? primaryYellow : mainBlack, size: 30),
-            label: "Attendance",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-              color: _isSelected == 3 ? primaryYellow : mainBlack,
-              size: 30,
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 10, 40),
+        height: size.width * .250,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(.15),
+              blurRadius: 20,
+              offset: const Offset(0, -10),
             ),
-            label: "Profile",
-          )
-        ],
+          ],
+        ),
+        child: Center(
+          child: ListView.builder(
+            itemCount: 4,
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: size.width * .024),
+            itemBuilder: (context, index) => InkWell(
+              onTap: () {
+                setState(
+                      () {
+                    _currentTab = index;
+                    if(index == 0){
+                      _currentScreen = home();
+                    }
+                    if( index == 1){
+                      _currentScreen = leaves();
+                    }
+                    if( index == 2) {
+                      _currentScreen = attendance();
+                    }if( index == 3) {
+                      _currentScreen = profile();
+                    } },
+                );
+              },
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 1500),
+                    curve: Curves.fastLinearToSlowEaseIn,
+                    margin: EdgeInsets.only(
+                      bottom: index == _currentTab ? 0 : size.width * .029,
+                      right: size.width * .0422,
+                      left: size.width * .0422,
+                    ),
+                    width: size.width * .128,
+                    height: index == _currentTab ? size.width * .020 : 0,
+                    decoration:  BoxDecoration(
+                      color: primaryYellow,
+
+                      borderRadius: const BorderRadius.vertical(
+                        bottom: Radius.circular(10),
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    listOfIcons[index],
+                    size: size.width * .076,
+                    color: index == _currentTab
+                        ? primaryYellow
+                        : mainBlack,
+                  ),
+                  SizedBox(height: size.width * .03),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

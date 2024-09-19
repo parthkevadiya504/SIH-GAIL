@@ -117,31 +117,32 @@ class _homeState extends State<home> {
                     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'com.example.gail',
                   ),
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        width: 80.0,
-                        height: 80.0,
-                        point: _initialPosition,
-                        child: Icon(
-                          Icons.location_on,
-                          color: Colors.red,
-                          size: 40.0,
-                        ),
-                      ),
-                    ],
-                  ),
                   CircleLayer(
                     circles: [
                       CircleMarker(
                         point: _initialPosition,
-                        color: Colors.yellow.withOpacity(0.3),
+                        color: Colors.blue.withOpacity(0.3),
                         borderStrokeWidth: 2,
                         borderColor: Colors.blue,
                         radius: 100, // Radius in meters
                       ),
                     ],
                   ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        width: 80.0,
+                        height: 80.0,
+                        point: _initialPosition,
+                        child: const Icon(
+                          Icons.location_pin,
+                          color: Colors.red,
+                          size: 40.0,
+                        ),
+                      ),
+                    ],
+                  ),
+
                 ],
               ),
             ),
