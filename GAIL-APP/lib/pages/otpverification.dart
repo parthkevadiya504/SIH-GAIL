@@ -34,7 +34,7 @@ class _otpverification extends State<otpverification>
             child: SizedBox(
               height: 350,
               width: 350,
-              child: Image.asset('assets/images/login.png'),
+              child: Image.asset('assets/images/Login_Img.png'),
             ),
           ),
           Positioned(

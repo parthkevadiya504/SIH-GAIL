@@ -6,26 +6,26 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-class Home extends StatefulWidget {
+class home extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _homeState createState() => _homeState();
 }
 
-class _HomeState extends State<Home> {
+class _homeState extends State<home> {
   String _latitude = 'Fetching...';
   String _longitude = 'Fetching...';
   bool _isMockLocation = false;
   bool _permissionGranted = false;
 
   MapController _mapController = MapController();
-  LatLng _initialPosition = LatLng(0, 0);
+  LatLng _initialPosition = LatLng(37.7749, -122.4194);
 
   @override
   void initState() {
     super.initState();
-    requestLocationPermission();
-    TrustLocation.start(5); // Start checking location every 5 seconds
-    _getLocation();
+    // requestLocationPermission();
+    // TrustLocation.start(5); // Start checking location every 5 seconds
+    // _getLocation();
   }
 
   Future<void> _getLocation() async {
@@ -80,8 +80,8 @@ class _HomeState extends State<Home> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Access Denied'),
-          content: Text('Mock location detected!'),
+          title: const Text('Access Denied'),
+          content: const Text('Mock location detected!'),
           actions: <Widget>[
             TextButton(
               child: Text('OK'),
@@ -101,53 +101,52 @@ class _HomeState extends State<Home> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        body: Stack(
+          alignment: AlignmentDirectional.center,
+          children: [
 
-        appBar: AppBar(
-
-          title: const Text('Trust Location with OpenStreetMap'),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: FlutterMap(
-                  mapController: _mapController,
-                  options: MapOptions(
-                    initialCenter: _initialPosition,
-                    initialZoom: 15.0,
+            Positioned(
+              child: FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  initialCenter: _initialPosition,
+                  initialZoom: 15.0,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.example.gail',
                   ),
-                  children: [
-                    TileLayer(
-                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.example.yourapp',
-                    ),
-                    MarkerLayer(
-                      markers: [
-                        Marker(
-                          width: 80.0,
-                          height: 80.0,
-                          point: _initialPosition,
-                          child: Icon(
-                            Icons.location_on,
-                            color: Colors.red,
-                            size: 40.0,
-                          ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        width: 80.0,
+                        height: 80.0,
+                        point: _initialPosition,
+                        child: Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                          size: 40.0,
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              top: 100,
+              child: Container(
+                height: 200,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:BorderRadius.circular(6)
+
                 ),
               ),
-              SizedBox(height: 20),
-              Text('Permission Granted: $_permissionGranted'),
-              SizedBox(height: 20),
-              Text('Mock Location: $_isMockLocation'),
-              Text('Latitude: $_latitude'),
-              Text('Longitude: $_longitude'),
-            ],
-          ),
-        ),
+            ),
+       ] ),
       ),
     );
   }

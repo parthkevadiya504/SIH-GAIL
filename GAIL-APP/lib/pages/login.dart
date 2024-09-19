@@ -3,9 +3,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gail/uI.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // Import the generated ObjectBox file
+import 'Mainhome.dart';
 import 'home.dart';
 import 'otpverification.dart';
 
@@ -56,27 +58,29 @@ class _LoginScreen extends State<LoginScreen>
   ];
   var selectedRole;
 
+
   @override
   Widget build(BuildContext context) {
+
+   double cheight = MediaQuery.of(context).size.height;
+   double top = 350;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: const Color(0xff30B4FF),
         body: Stack(children: [
           Positioned(
-            top: 50,
+            top: 0,
             right: 0,
             left: 0,
-            child: SizedBox(
-              height: 350,
-              width: 350,
-              child: Image.asset('assets/images/login.png'),
-            ),
+            child: Image.asset('assets/images/Login_Img.png'),
           ),
           Positioned(
-              top: 400,
-              child: Container(
-                height: 900,
+              top: top,
+              child: AnimatedContainer(
+                duration: const Duration(microseconds: 300),
+
+                height: cheight,
                 width: MediaQuery.sizeOf(context).width,
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -107,12 +111,12 @@ class _LoginScreen extends State<LoginScreen>
                           style: GoogleFonts.poppins(
                             fontSize: 30,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xff47A5E4),
+                            color: primaryRed,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 40,
                     ),
                     Padding(
@@ -121,10 +125,17 @@ class _LoginScreen extends State<LoginScreen>
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           TextFormField(
+                            onTap:(){
+                              setState(() {
+                                cheight = 100;
+                                print("hiii");
+
+                              });
+                            },
                             controller: usernameController,
                             enableSuggestions: true,
                             style: GoogleFonts.poppins(
-                              color: Color(0xFF535353),
+                              color: const Color(0xFF535353),
                               fontWeight: FontWeight.w400,
                               fontSize: 14,
                               //letterSpacing: 1,
@@ -143,7 +154,7 @@ class _LoginScreen extends State<LoginScreen>
                                     width: 1.0,
                                   )),
                               hintText: 'Username / Email',
-                              hintStyle: const TextStyle(
+                              hintStyle: TextStyle(
                                   color: Color(0xff535353), fontSize: 14),
                               filled: true,
                               focusedBorder: const OutlineInputBorder(
@@ -164,7 +175,7 @@ class _LoginScreen extends State<LoginScreen>
                           ),
 
                           const SizedBox(
-                            height: 10,
+                            height: 20,
                           ),
                           //--------------------------------Password---------------------------------
                           TextFormField(
@@ -240,25 +251,7 @@ class _LoginScreen extends State<LoginScreen>
                               // },
                               ),
                           const SizedBox(
-                            height: 10,
-                          ),
-
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => otpverification()));
-                            },
-                            child: Text(
-                              "Forgot Password?",
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xff16376E),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
+                            height: 20,
                           ),
 
                           //-----------------------------------------Log IN Button--------------------------------------
@@ -275,18 +268,17 @@ class _LoginScreen extends State<LoginScreen>
 
 
                               style: ButtonStyle(
-                                backgroundColor: const WidgetStatePropertyAll(
-                                    Color(0xff47A5E4)),
+                                backgroundColor: WidgetStatePropertyAll(
+                                    mainBlack),
                                 shape: WidgetStateProperty.all<
                                     RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      side: const BorderSide(
-                                          color: Color(0xff47A5E4))),
+                                      ),
                                 ),
                               ),
                               child: Text(
-                                "Log in",
+                                "Send OTP",
                                 style: GoogleFonts.poppins(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
