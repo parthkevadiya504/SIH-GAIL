@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
+import 'package:gail/pages/login.dart';
+import 'package:gail/pages/splashscreen.dart';
 import 'package:trust_location/trust_location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -18,14 +20,14 @@ class _homeState extends State<home> {
   bool _permissionGranted = false;
 
   MapController _mapController = MapController();
-  LatLng _initialPosition = LatLng(37.7749, -122.4194);
+  LatLng _initialPosition = LatLng(0, 0);
 
   @override
   void initState() {
     super.initState();
-    // requestLocationPermission();
-    // TrustLocation.start(5); // Start checking location every 5 seconds
-    // _getLocation();
+    requestLocationPermission();
+    TrustLocation.start(5); // Start checking location every 5 seconds
+    _getLocation();
   }
 
   Future<void> _getLocation() async {
@@ -79,22 +81,78 @@ class _homeState extends State<home> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Access Denied'),
-          content: const Text('Mock location detected!'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                TrustLocation.start(5); // Restart location updates
-              },
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20), // Rounded corners
+          ),
+          child: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red.shade100,
+                    ),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.red,
+                      size: 40,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Attempts of GPS Spoofing will be reported',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red, // Red color for the title
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Contact Your Higer Authority To Further Access',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black54,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => SplashScreen()),
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue, // Blue text color
+                    ),
+                    child: Text(
+                      'Okay',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         );
       },
     );
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +162,6 @@ class _homeState extends State<home> {
         body: Stack(
           alignment: AlignmentDirectional.center,
           children: [
-
             Positioned(
               child: FlutterMap(
                 mapController: _mapController,
@@ -142,7 +199,6 @@ class _homeState extends State<home> {
                       ),
                     ],
                   ),
-
                 ],
               ),
             ),
@@ -152,13 +208,13 @@ class _homeState extends State<home> {
                 height: 200,
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:BorderRadius.circular(6)
-
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(6),
                 ),
               ),
             ),
-       ] ),
+          ],
+        ),
       ),
     );
   }

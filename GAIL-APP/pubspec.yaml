@@ -42,7 +42,6 @@ dependencies:
   google_fonts: ^6.2.1
   otp_text_field: ^1.1.3
   fluttertoast: ^8.2.5
-  geofence_service: ^6.0.0
 
 dev_dependencies:
   flutter_test:
