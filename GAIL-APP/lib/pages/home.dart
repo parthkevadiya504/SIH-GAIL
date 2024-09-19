@@ -131,6 +131,17 @@ class _homeState extends State<home> {
                       ),
                     ],
                   ),
+                  CircleLayer(
+                    circles: [
+                      CircleMarker(
+                        point: _initialPosition,
+                        color: Colors.yellow.withOpacity(0.3),
+                        borderStrokeWidth: 2,
+                        borderColor: Colors.blue,
+                        radius: 100, // Radius in meters
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

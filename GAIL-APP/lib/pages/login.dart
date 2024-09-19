@@ -1,6 +1,5 @@
 // import 'dart:ffi';
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gail/uI.dart';
@@ -10,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'Mainhome.dart';
 import 'home.dart';
 import 'otpverification.dart';
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,8 +26,6 @@ class _LoginScreen extends State<LoginScreen>
     color: Colors.black,
   );
   bool _isPasswordShow = false;
-
-
 
 // Helper function to show an alert dialog
   void _showErrorDialog(String message) {
@@ -58,12 +54,10 @@ class _LoginScreen extends State<LoginScreen>
   ];
   var selectedRole;
 
-
   @override
   Widget build(BuildContext context) {
-
-   double cheight = MediaQuery.of(context).size.height;
-   double top = 350;
+    double cheight = MediaQuery.of(context).size.height;
+    double top = 350;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -79,7 +73,6 @@ class _LoginScreen extends State<LoginScreen>
               top: top,
               child: AnimatedContainer(
                 duration: const Duration(microseconds: 300),
-
                 height: cheight,
                 width: MediaQuery.sizeOf(context).width,
                 decoration: BoxDecoration(
@@ -125,11 +118,10 @@ class _LoginScreen extends State<LoginScreen>
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           TextFormField(
-                            onTap:(){
+                            onTap: () {
                               setState(() {
                                 cheight = 100;
                                 print("hiii");
-
                               });
                             },
                             controller: usernameController,
@@ -261,20 +253,19 @@ class _LoginScreen extends State<LoginScreen>
                             height: 55,
                             child: ElevatedButton(
                               onPressed: () => {
-                                Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (context) =>  Home()),
-                              )
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => Home()),
+                                )
                               },
-
-
                               style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                    mainBlack),
+                                backgroundColor:
+                                    WidgetStatePropertyAll(mainBlack),
                                 shape: WidgetStateProperty.all<
                                     RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                 ),
                               ),
                               child: Text(
