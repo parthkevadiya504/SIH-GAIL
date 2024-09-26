@@ -38,11 +38,16 @@ The dashboard is a web interface built using React. It allows admin users to vie
 - Chart.js / D3.js (for data visualization)
 - tailwind css (for styling)
 
+### 4. Research-papers
+Contain pdfs of All Reserach Papers.
+
+**Folder:** `/Research-papers`
+
 
 ## Links
 
 - **Figma Design:** [View the Figma Design](<https://www.figma.com/design/c3iyMR0wxgZd9j6sNzKdHn/SIH-Gail-India?node-id=0-1&node-type=CANVAS&t=YaMFqfqG7QqiCXtY-0>)
-- **YouTube Demo:** [Watch the Demo Video](<Add Your YouTube Link Here>)
+- **YouTube Demo:** [Watch the Demo Video](<https://youtu.be/lpmqvCP0dLg>)
 
 ---
 
