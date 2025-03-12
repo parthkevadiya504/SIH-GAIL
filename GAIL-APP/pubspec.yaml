@@ -42,6 +42,7 @@ dependencies:
   google_fonts: ^6.2.1
   otp_text_field: ^1.1.3
   fluttertoast: ^8.2.5
+  flutter_sim_data: ^1.0.5
 
 dev_dependencies:
   flutter_test:

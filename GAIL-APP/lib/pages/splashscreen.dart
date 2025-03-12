@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     Future.delayed(Duration(seconds: 2), () async {
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+          .push(MaterialPageRoute(builder: (context) =>  LoginScreen()));
     }
 
     );
