@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ssip2025/geoFence_service/geofence.dart';
 import '../uI.dart';
 import 'Attendance.dart';
 import 'Leaves.dart';
@@ -20,7 +21,7 @@ class _HomeState extends State<Home> {
     home(),
     const leaves(),
     const attendance(),
-    const profile(),
+    GeofencingHomePage(),
   ];
  Widget _currentScreen = home();
 
@@ -184,7 +185,7 @@ class _HomeState extends State<Home> {
                     if( index == 2) {
                       _currentScreen = attendance();
                     }if( index == 3) {
-                      _currentScreen = profile();
+                      _currentScreen = GeofencingHomePage();
                     } },
                 );
               },

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:ssip2025/pages/splashscreen.dart';
 
-import 'package:trust_location/trust_location.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -19,36 +19,110 @@ class _homeState extends State<home> {
   bool _isMockLocation = false;
   bool _permissionGranted = false;
 
+  StreamSubscription<Position>? _positionStreamSubscription;
   MapController _mapController = MapController();
   LatLng _initialPosition = LatLng(0, 0);
 
   @override
   void initState() {
     super.initState();
-    requestLocationPermission();
-    TrustLocation.start(5); // Start checking location every 5 seconds
+    _checkLocationPermission();
+  }
+
+  @override
+  void dispose() {
+    // Cancel the position stream subscription
+    _positionStreamSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _checkLocationPermission() async {
+    // Check if location services are enabled
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled
+      setState(() {
+        _latitude = 'Location services disabled';
+        _longitude = 'Location services disabled';
+      });
+      return;
+    }
+
+    // Check location permission
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied
+        setState(() {
+          _permissionGranted = false;
+          _latitude = 'Location permission denied';
+          _longitude = 'Location permission denied';
+        });
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are permanently denied
+      setState(() {
+        _permissionGranted = false;
+        _latitude = 'Location permission permanently denied';
+        _longitude = 'Location permission permanently denied';
+      });
+      return;
+    }
+
+    // Permissions are granted, start getting location
+    setState(() {
+      _permissionGranted = true;
+    });
+    await requestLocationPermission(); // For compatibility with your permission_handler
     _getLocation();
   }
 
   Future<void> _getLocation() async {
     try {
-      TrustLocation.onChange.listen((values) {
-        setState(() {
-          _latitude = values.latitude ?? 'Unknown';
-          _longitude = values.longitude ?? 'Unknown';
-          _isMockLocation = values.isMockLocation ?? false;
+      // Get current position first
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high
+      );
 
-          if (_isMockLocation) {
-            TrustLocation.stop(); // Stop location updates
-            _showMockLocationAlert();
-          } else {
-            _updateMapLocation();
-          }
-        });
+      _updatePosition(position);
+
+      // Set up a stream for continuous location updates
+      const LocationSettings locationSettings = LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10, // Update if device moves 10 meters
+      );
+
+      _positionStreamSubscription = Geolocator.getPositionStream(
+          locationSettings: locationSettings
+      ).listen(_updatePosition);
+
+    } catch (e) {
+      print('Error getting location: $e');
+      setState(() {
+        _latitude = 'Error';
+        _longitude = 'Error';
       });
-    } on PlatformException catch (e) {
-      print('PlatformException $e');
     }
+  }
+
+  void _updatePosition(Position position) {
+    setState(() {
+      _latitude = position.latitude.toString();
+      _longitude = position.longitude.toString();
+      _isMockLocation = position.isMocked;
+
+      if (_isMockLocation) {
+        // Cancel stream if mock location detected
+        _positionStreamSubscription?.pause();
+        _showMockLocationAlert();
+      } else {
+        _updateMapLocation();
+      }
+    });
   }
 
   Future<void> requestLocationPermission() async {
@@ -64,22 +138,27 @@ class _homeState extends State<home> {
   }
 
   void _updateMapLocation() {
-    final lat = double.tryParse(_latitude);
-    final lng = double.tryParse(_longitude);
+    try {
+      final lat = double.tryParse(_latitude);
+      final lng = double.tryParse(_longitude);
 
-    if (lat != null && lng != null) {
-      setState(() {
-        _initialPosition = LatLng(lat, lng);
-      });
-      _mapController.move(_initialPosition, 15.0);
-    } else {
-      print('Invalid latitude or longitude values');
+      if (lat != null && lng != null) {
+        setState(() {
+          _initialPosition = LatLng(lat, lng);
+        });
+        _mapController.move(_initialPosition, 15.0);
+      } else {
+        print('Invalid latitude or longitude values');
+      }
+    } catch (e) {
+      print('Error updating map: $e');
     }
   }
 
   void _showMockLocationAlert() {
     showDialog(
       context: context,
+      barrierDismissible: false, // User must tap button to close dialog
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
@@ -117,7 +196,7 @@ class _homeState extends State<home> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'Contact Your Higer Authority To Further Access',
+                    'Contact Your Higher Authority To Further Access',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.black54,
@@ -151,8 +230,6 @@ class _homeState extends State<home> {
       },
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {

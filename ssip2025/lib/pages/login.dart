@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sim_data/sim_data.dart';
@@ -28,36 +29,48 @@ class _LoginScreen extends State<LoginScreen>
   bool isLoading = false;
   final _simData = SimData();
 
-
   @override
   void initState() {
     super.initState();
-    fetchSimPhoneNumber();
+    _requestPermissions();
   }
 
-  Future<void> fetchSimPhoneNumber() async {
+  // Separated permission handling
+  Future<void> _requestPermissions() async {
     setState(() => isLoading = true);
 
-    if (await Permission.sms.request().isGranted &&
-        await Permission.phone.request().isGranted) {
-      try {
-        List<SimDataModel> simData = await _simData.getSimData();
-        if (simData.isNotEmpty && simData.first.phoneNumber.isNotEmpty) {
-          setState(() {
-            simPhoneNumber = simData.first.phoneNumber;
-            print(simPhoneNumber);
-          });
-        } else {
-          print("No phone number found in SIM");
-        }
-      } catch (e) {
-        print("Error fetching SIM data: $e");
-      }
+    // First request notification permission
+    bool notificationsAllowed =
+        await AwesomeNotifications().isNotificationAllowed();
+    if (!notificationsAllowed) {
+      // Request notification permissions and wait for result
+      await AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+
+    // Then handle SMS and phone permissions separately
+    if (await Permission.phone.request().isGranted) {
+      await fetchSimPhoneNumber();
     } else {
-      print("Permission denied");
+      print("SMS or phone permission denied");
     }
 
     setState(() => isLoading = false);
+  }
+
+  Future<void> fetchSimPhoneNumber() async {
+    try {
+      List<SimDataModel> simData = await _simData.getSimData();
+      if (simData.isNotEmpty && simData.first.phoneNumber.isNotEmpty) {
+        setState(() {
+          simPhoneNumber = simData.first.phoneNumber;
+          print(simPhoneNumber);
+        });
+      } else {
+        print("No phone number found in SIM");
+      }
+    } catch (e) {
+      print("Error fetching SIM data: $e");
+    }
   }
 
   Future<void> sendOTP() async {
@@ -80,10 +93,10 @@ class _LoginScreen extends State<LoginScreen>
             content: Text("An OTP has been sent to $simPhoneNumber."),
             actions: [
               TextButton(
-                onPressed: () { Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => Home()));
-          },
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => Home()));
+                },
                 child: Text("OK"),
               ),
             ],
@@ -97,7 +110,6 @@ class _LoginScreen extends State<LoginScreen>
       print("Error sending OTP: $e");
     }
   }
-
 
   void showMismatchDialog(String enteredPhone) {
     showDialog(
@@ -117,28 +129,24 @@ class _LoginScreen extends State<LoginScreen>
   }
 
   void login() {
-    String enteredPhone ="91${phoneController.text.trim()}";
+    String enteredPhone = "91${phoneController.text.trim()}";
     print("entered no $enteredPhone");
 
     if (enteredPhone.isNotEmpty) {
       if (enteredPhone == simPhoneNumber) {
         print("Logging in with: $enteredPhone");
-        Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => Home()));
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => Home()));
 
         // Proceed with login or OTP verification
       } else {
         print("Phone number mismatch: $enteredPhone");
         showMismatchDialog(enteredPhone);
-
       }
     } else {
       print("Enter a valid phone number");
     }
   }
-
-
 
   Icon eye = const Icon(
     CupertinoIcons.eye_slash,
@@ -373,8 +381,6 @@ class _LoginScreen extends State<LoginScreen>
                             child: ElevatedButton(
                               onPressed: () => {
                                 login(),
-
-
                               },
                               style: ButtonStyle(
                                 backgroundColor:
